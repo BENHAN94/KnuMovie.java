@@ -8,6 +8,7 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 
 //asdfasdf
+//rbwjwdjwdjwdjwdj
 public class KnuMovie {
 
     public static final String URL = "jdbc:postgresql://localhost:5432/knu"; // URL
