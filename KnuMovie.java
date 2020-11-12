@@ -7,13 +7,15 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
+////////a/sdasd/as/d
 //asdfasdf
 // 한효범입니다
 // 헤이루 미네랄워터
 // 펩시콜라
 //rbwjwdjwdjwdjwdj
+//pckckck
 public class KnuMovie {
-
+    // asd/as/d/asd/
     public static final String URL = "jdbc:postgresql://localhost:5432/knu"; // URL
     public static final String USER = "knu"; // USER
     public static final String USER_PWD = "1234"; // PWD
