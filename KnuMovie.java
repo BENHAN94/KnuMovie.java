@@ -7,14 +7,6 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
-////////a/sdasd/as/d
-//asdfasdf
-// 한효범입니다
-// 헤이루 미네랄 가스 드론 프로브 scv 
-// alalalalalal
-// 펩시콜라
-//rbwjwdjwdjwdjwdj
-//pckckck
 public class KnuMovie {
     // asd/as/d/asd/
     public static final String URL = "jdbc:postgresql://localhost:5432/knu"; // URL
@@ -1295,6 +1287,7 @@ public class KnuMovie {
     private void showRatingLog(Connection conn, String email) {
         ArrayList<MovieData> movieData = new ArrayList<MovieData>();
         int selection = 1;
+        int insideSelection = 1;
         int i = 0;
         String sql = "";
         if (email == null) {
@@ -1350,7 +1343,7 @@ public class KnuMovie {
                 while (selection != 0) {
                     try {
                         Statement stmt = conn.createStatement();
-                        sql = "SELECT Original_title, rating, Running_time, Start_year, End_year, Type, Is_adult, Genre "
+                        sql = "SELECT DISTINCT Original_title, rating, Running_time, Start_year, End_year, Type, Is_adult, Genre "
                                 + "FROM MOVIE, GENRE, GENRE_OF WHERE Movie_id = mid AND Genre_id = gen AND "
                                 + "Movie_id = " + movieData.get(selection - 1).movieId;
                         ResultSet rs = stmt.executeQuery(sql);
@@ -1375,18 +1368,20 @@ public class KnuMovie {
                                 + "WHERE Movie_id = mid AND Actor_id = aid AND " + "Movie_id = "
                                 + movieData.get(selection - 1).movieId;
                         rs = stmt.executeQuery(sql);
-                        rs.next();
+
+                        if (rs.next()) {
+                            p("");
+                            System.out.print("배우: " + rs.getString(1));
+                            while (rs.next())
+                                System.out.print(", " + rs.getString(1));
+                        }
                         p("");
-                        System.out.print("배우: " + rs.getString(1));
-                        while (rs.next())
-                            System.out.print(", " + rs.getString(1));
                         p("");
-                        p("");
-                        int insideSelection = reRating(conn, movieData.get(selection - 1).movieId, uid);
+                        insideSelection = reRating(conn, movieData.get(selection - 1).movieId, uid);
                         if (insideSelection == 0)
                             return;
                     } catch (SQLException e) {
-
+                        p(e.getMessage());
                     }
                 }
                 KnuMovie.clearScreen();
@@ -1405,6 +1400,7 @@ public class KnuMovie {
             p("0. 뒤로가기");
             selection = scan.nextInt();
         }
+        KnuMovie.clearScreen();
 
     }
 
@@ -1553,7 +1549,3 @@ public class KnuMovie {
     }
 
 }
-
-/// 안녕하세요 한효범입니다.
-
-// 깃 공부용 라인
