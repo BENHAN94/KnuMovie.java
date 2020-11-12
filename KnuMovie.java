@@ -7,6 +7,7 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
+//asdfasdf
 public class KnuMovie {
 
     public static final String URL = "jdbc:postgresql://localhost:5432/knu"; // URL
