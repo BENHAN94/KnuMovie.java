@@ -8,6 +8,9 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 
 //asdfasdf
+// 한효범입니다
+// 헤이루 미네랄워터
+// 펩시콜라
 //rbwjwdjwdjwdjwdj
 public class KnuMovie {
 
