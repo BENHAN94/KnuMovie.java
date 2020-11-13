@@ -79,16 +79,35 @@ public class KnuMovie {
         }
     }
 
-    private int catchScanNextInt(Scanner scan2) {
-        try {
+    /* 수정사항 */
+    // - 수정 이전:
+    // catchScanNextInt의 입력이 int가 아니라면 -999를 return
+    // 수정 후:
+    // exception이 일어날 시 -999를 리턴하는 대신 while (isError) 로 돌아가 다시 입력을 받음
 
-            return scan2.nextInt();
-        } catch (InputMismatchException e) {
-            p("잘못된 입력입니다.");
-            scan2.next();
-            return 999;
-            // TODO: handle exception
+    private int catchScanNextInt(Scanner scan2) {
+        boolean isError = true;
+        boolean isFirstError = true;
+        int selection = 0;
+        while (isError) {
+            try {
+                if (selection == -1) {
+                    scan2.nextLine(); // 테스트 결과 scan.nextLine()이 없으면 exception이 일어나 루프가 돌 때
+                                      // scan.nextInt()에서 입력된 Enter가 다음 루프의 scan.nextInt() 로 들어가 무한루프가 생겨요.
+                                      // 즉 무한루프 방지를 위한 라인입니다.
+                                      // if(selection ==-1)이 없으면 첫 입력시에도 scan.nextLine()이 실행되어버립니다.
+                }
+                selection = scan2.nextInt();
+                isError = false;
+            } catch (InputMismatchException e) {
+                if (isFirstError)
+                    p("* 잘못된 입력입니다. 다시 입력해주세요.");
+                isFirstError = false;
+                selection = -1;
+                isError = true;
+            }
         }
+        return selection;
     }
 
     // 로그인 후 메인 메뉴
@@ -129,7 +148,7 @@ public class KnuMovie {
                     adminMenu(conn);
                     break;
                 case 2:
-                    showRatingLog(conn, null);
+                    showRatingLog(conn, email);
                     break;
                 default:
                     p("잘못된 입력입니다.");
@@ -730,8 +749,10 @@ public class KnuMovie {
             int sid = catchScanNextInt(scan);
             String sql = "UPDATE ACCOUNT SET " + "sid = '" + sid + "'" + "WHERE Email_add = '" + email + "'";
             stmt.executeUpdate(sql);
+            KnuMovie.clearScreen();
             return 1;
         } catch (SQLException e) {
+            KnuMovie.clearScreen();
             p("잘못 입력하셨습니다. 다시 입력 해주세요");
             return 0;
         }
@@ -1100,7 +1121,7 @@ public class KnuMovie {
                     break;
                 case 5:
                     enterRating(rating);
-                    KnuMovie.pause();
+                    // pause삭제
                     KnuMovie.clearScreen();
                     break;
                 case 6:
@@ -1173,13 +1194,20 @@ public class KnuMovie {
         }
     }
 
+    // 수정사항
+    // 메뉴에 "1. 다음" 이 표시되지 않았을 때 1을 누르는 경우 아무런 반응이 없도록 수정했습니다. ("2.이전" 도 마찬가지);
     private void searchResult(ArrayList<MovieData> movieData, Connection conn, boolean isAdmin,
             boolean fromAdminRatingConfirmMenu) {
 
+        boolean wrongInput = false;
         int i = 0;
         int selection = 1;
         while (selection != 0) {
             if (selection == 1) {
+                wrongInput = false;
+                if (i >= movieData.size()) {
+                    i = i - i % 10;
+                }
                 p("검색 결과");
                 p("=================================");
                 for (int j = 1; j <= 10 && i < movieData.size(); j++) {
@@ -1190,16 +1218,22 @@ public class KnuMovie {
                     i++;
                 }
             } else if (selection == 2) {
+                wrongInput = false;
                 p("검색 결과");
                 p("=================================");
-                i -= 11;
-                i /= 10;
-                i *= 10;
+                if ((i - 1) / 10 <= 0)
+                    i = 0;
+                else {
+                    i -= 11;
+                    i /= 10;
+                    i *= 10;
+                }
                 for (int j = 1; j <= 10; j++) {
                     p(i + 1 + ". " + movieData.get(i).title + " (" + movieData.get(i).year + ")");
                     i++;
                 }
-            } else {
+            } else if (selection == 3) {
+                wrongInput = false;
                 p("영화를 선택 해 주세요.");
                 selection = catchScanNextInt(scan);
                 KnuMovie.clearScreen();
@@ -1267,19 +1301,25 @@ public class KnuMovie {
                 } catch (SQLException e) {
                     p("error: " + e.getMessage());
                 }
+            } else {
+                wrongInput = true;
+                selection = 1;
+                i = i - 10;
             }
-            p("=================================");
-            if (i < movieData.size())
-                p("1. 다음");
-            int j = i - 1;
-            j /= 10;
-            if (j > 0)
-                p("2. 이전");
-            p("3. 선택");
-            p("0. 뒤로가기");
-            selection = catchScanNextInt(scan);
-            if (selection != 3)
-                KnuMovie.clearScreen();
+            if (!wrongInput) {
+                p("=================================");
+                if (i < movieData.size())
+                    p("1. 다음");
+                int j = i - 1;
+                j /= 10;
+                if (j > 0)
+                    p("2. 이전");
+                p("3. 선택");
+                p("0. 뒤로가기");
+                selection = catchScanNextInt(scan);
+                if (selection != 3)
+                    KnuMovie.clearScreen();
+            }
         }
         return;
     }
@@ -1339,6 +1379,8 @@ public class KnuMovie {
     }
 
     // 평가 내역 확인
+    // 수정사항
+    // 메뉴에 "1. 다음" 이 표시되지 않았을 때 1을 누르는 경우 아무런 반응이 없도록 수정했습니다. ("2.이전" 도 마찬가지);
     private void showRatingLog(Connection conn, String email) {
         ArrayList<MovieData> movieData = new ArrayList<MovieData>();
         int selection = 1;
@@ -1370,7 +1412,9 @@ public class KnuMovie {
             switch (selection) {
                 case 1:
                     KnuMovie.clearScreen();
-                    p(email + " 님의 평가");
+                    if (i >= movieData.size())
+                        i = i - i % 10;
+                    p(email + " 님의 평가하신 영상물");
                     p("===============================================");
                     for (int j = 1; j <= 10 && i < movieData.size(); j++) {
                         p(i + 1 + ". " + movieData.get(i).title + " (" + movieData.get(i).year + ") ==>  "
@@ -1380,12 +1424,18 @@ public class KnuMovie {
                     break;
                 case 2:
                     KnuMovie.clearScreen();
+                    if ((i - 1) / 10 <= 0)
+                        i = 0;
                     if (email != null)
                         p(email + " 님의 평가");
                     p("===============================================");
-                    i -= 11;
-                    i /= 10;
-                    i *= 10;
+                    if ((i - 1) / 10 <= 0)
+                        i = 0;
+                    else {
+                        i -= 11;
+                        i /= 10;
+                        i *= 10;
+                    }
                     for (int j = 1; j <= 10; j++) {
                         p(i + 1 + ". " + movieData.get(i).title + " (" + movieData.get(i).year + ") ==>  "
                                 + movieData.get(i).rating + " 점");
@@ -1445,8 +1495,7 @@ public class KnuMovie {
                     }
                     break;
                 default:
-
-                    break;
+                    continue;
             }
             p("===============================================");
             if (i < movieData.size())

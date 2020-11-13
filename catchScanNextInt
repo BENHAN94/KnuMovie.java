@@ -1,18 +1,23 @@
 scan.nextInt error check
 
-login                   success
-Signup                  fail
-Mainmenu                success
-queryMovie              fail
-->genre		 success
-->type 		 fail
+login                   success => 성공
+Signup                  fail => 성공
+Mainmenu                success => 성공
+queryMovie              fail => 성공
+->genre		 success => 성공
+->type 		 fail => 성공
 
-rating confirm          borue
-update account info     success
-->membership		 borue
-->gender 		 borue
-adminmenu               borue
-->type			 fail
-->confirmrating 	 borue
-->->hoewonbyeolrating	 borue
+rating confirm          borue => 성공
+update account info     success => 성공
+->membership		 borue => 성공
+->gender 		 borue => 성공
+adminmenu               borue => 성공
+->type			 fai => 성공
+->confirmrating 	 boru => 성공
+->->hoewonbyeolrating	 borue = 성공
+
+=========================================
+
+이상 모두 정상작동 합니다.
+*참고: catchScanNextInt() 내용 수정
 
