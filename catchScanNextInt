@@ -1,0 +1,18 @@
+scan.nextInt error check
+
+login                   success
+Signup                  fail
+Mainmenu                success
+queryMovie              fail
+->genre		 success
+->type 		 fail
+
+rating confirm          borue
+update account info     success
+->membership		 borue
+->gender 		 borue
+adminmenu               borue
+->type			 fail
+->confirmrating 	 borue
+->->hoewonbyeolrating	 borue
+
