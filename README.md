@@ -20,6 +20,6 @@ scanNextInt() 모두 정상작동 합니다.
 
 1. 버그 체크
 </br>
-2. RAADME.txt 작성
+2. README.txt 작성
 
     
