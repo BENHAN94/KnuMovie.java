@@ -8,7 +8,6 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 
 public class KnuMovie {
-    // asd/as/d/asd/
     public static final String URL = "jdbc:postgresql://localhost:5432/knu"; // URL
     public static final String USER = "knu"; // USER
     public static final String USER_PWD = "1234"; // PWD
@@ -87,7 +86,6 @@ public class KnuMovie {
 
     private int catchScanNextInt(Scanner scan2) {
         boolean isError = true;
-        boolean isFirstError = true;
         int selection = 0;
         while (isError) {
             try {
@@ -100,9 +98,6 @@ public class KnuMovie {
                 selection = scan2.nextInt();
                 isError = false;
             } catch (InputMismatchException e) {
-                if (isFirstError)
-                    p("* 잘못된 입력입니다. 다시 입력해주세요.");
-                isFirstError = false;
                 selection = -1;
                 isError = true;
             }
@@ -202,6 +197,7 @@ public class KnuMovie {
         }
     }
 
+    // 영화 별 평가 로그
     private void logByMovie(Connection conn, boolean fromAdminRatingConfirmMenu) {
         queryMovie(conn, true, fromAdminRatingConfirmMenu);
     }
@@ -477,6 +473,7 @@ public class KnuMovie {
         return selection;
     }
 
+    // 평가 내역 확인(어드민)
     void ratingLogMenu(Connection conn) {
 
         int selection = 0;
@@ -605,6 +602,7 @@ public class KnuMovie {
         System.out.println(message);
     }
 
+    // 이름 변경
     private int changeName(Connection conn, String lname, String fname) {
         try {
             Statement stmt = conn.createStatement();
@@ -625,6 +623,7 @@ public class KnuMovie {
         }
     }
 
+    // 생년월일 변경
     private int changeBirthday(Connection conn, String birthday) {
         try {
             Statement stmt = conn.createStatement();
@@ -642,6 +641,7 @@ public class KnuMovie {
         }
     }
 
+    // 성별 변경
     private int changeSex(Connection conn, String sex) {
         try {
             Statement stmt = conn.createStatement();
@@ -669,6 +669,7 @@ public class KnuMovie {
         }
     }
 
+    // 비밀번호 변경
     private int changePassword(Connection conn, String pwd) {
         try {
             Statement stmt = conn.createStatement();
@@ -684,6 +685,7 @@ public class KnuMovie {
         }
     }
 
+    // 휴대폰 변경
     private int changePhone(Connection conn, String phone) {
         try {
             Statement stmt = conn.createStatement();
@@ -705,6 +707,7 @@ public class KnuMovie {
         }
     }
 
+    // 주소 변경
     private int changeAddress(Connection conn, String address) {
         try {
             Statement stmt = conn.createStatement();
@@ -722,6 +725,7 @@ public class KnuMovie {
         }
     }
 
+    // 직업 변경
     private int changeJob(Connection conn, String job) {
         try {
             Statement stmt = conn.createStatement();
@@ -738,6 +742,7 @@ public class KnuMovie {
         }
     }
 
+    // 멤버쉽 변경
     private int changeMembership(Connection conn, String membership) {
         try {
             Statement stmt = conn.createStatement();
@@ -758,6 +763,7 @@ public class KnuMovie {
         }
     }
 
+    // 회원 탈퇴
     private int withdraw(Connection conn) {
         try {
             KnuMovie.clearScreen();
@@ -862,7 +868,6 @@ public class KnuMovie {
         p("3. 개봉 (방영 시작) 날짜");
         p("4. 종영 날짜");
         p("5. 청소년 관람 가능 여부");
-        /* p("6. 배우"); */
         p("0. 뒤로가기");
         selection = catchScanNextInt(scan);
         KnuMovie.clearScreen();
@@ -1047,10 +1052,6 @@ public class KnuMovie {
                 }
                 break;
 
-            /*
-             * case 6: break;
-             */
-
             case 0:
                 return;
         }
@@ -1196,6 +1197,7 @@ public class KnuMovie {
 
     // 수정사항
     // 메뉴에 "1. 다음" 이 표시되지 않았을 때 1을 누르는 경우 아무런 반응이 없도록 수정했습니다. ("2.이전" 도 마찬가지);
+    // 영화 검색 결과
     private void searchResult(ArrayList<MovieData> movieData, Connection conn, boolean isAdmin,
             boolean fromAdminRatingConfirmMenu) {
 
@@ -1324,6 +1326,7 @@ public class KnuMovie {
         return;
     }
 
+    // 연도 선택
     private String enterYear(String startOrEnd) {
         p(startOrEnd + " 선택");
         p("=======================================");
@@ -1340,6 +1343,7 @@ public class KnuMovie {
         return year;
     }
 
+    // 평가 선택
     private void enterRating(Rating rating) {
         rating.minRating = 0;
         rating.maxRating = 0;
@@ -1381,6 +1385,7 @@ public class KnuMovie {
     // 평가 내역 확인
     // 수정사항
     // 메뉴에 "1. 다음" 이 표시되지 않았을 때 1을 누르는 경우 아무런 반응이 없도록 수정했습니다. ("2.이전" 도 마찬가지);
+    // 평가 내역 확인
     private void showRatingLog(Connection conn, String email) {
         ArrayList<MovieData> movieData = new ArrayList<MovieData>();
         int selection = 1;
@@ -1514,6 +1519,7 @@ public class KnuMovie {
 
     }
 
+    // 장르 수정
     private void updateGenre(Connection conn, int mid) {
         ArrayList<String> genre = new ArrayList<String>();
         ArrayList<Integer> genreId = new ArrayList<Integer>();
@@ -1603,6 +1609,7 @@ public class KnuMovie {
         }
     }
 
+    // 계정 별 평가 기록 확인
     void logByAccount(Connection conn) {
         KnuMovie.clearScreen();
         boolean isError = true;
@@ -1622,17 +1629,21 @@ public class KnuMovie {
 
     // ===========================UTILL
 
+    // 콘솔 초기화
     public static void clearScreen() {
         System.out.print("\033[H\033[2J");
         System.out.flush();
     }
 
+    // 멈춤 (Enter를 눌러 계속 진행)
     public static void pause() {
         try {
             System.in.read();
         } catch (IOException e) {
         }
     }
+
+    // ==========================Data Class=====================
 
     private class Rating {
         int minRating = 0;

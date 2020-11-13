@@ -15,3 +15,11 @@ scanNextInt() 모두 정상작동 합니다.
 => 아무런 반응이 없도록 수정했습니다. ("2.이전" 도 마찬가지)
 </br>
 *참고: queryMovie(), showRatingLog();
+
+# TODO
+
+1. 버그 체크
+</br>
+2. RAADME.txt 작성
+
+    
