@@ -1060,10 +1060,12 @@ public class KnuMovie {
 
     // 영화 검색
     private void queryMovie(Connection conn, boolean isAdmin, boolean fromAdminRatingConfirmMenu) {
-        String type, startYear, endYear, region, actor;
+        String type, region, actor;
         int runningTime, genreId, selection = -1;
         Rating rating = new Rating(-1, -1);
-        type = startYear = endYear = region = actor = "";
+        StartYear startYear = new StartYear("", "");
+        EndYear endYear = new EndYear("", "");
+        type = region = actor = "";
         runningTime = genreId = -1;
 
         ArrayList<MovieData> movieData = new ArrayList<MovieData>();
@@ -1076,7 +1078,7 @@ public class KnuMovie {
             p("2. 장르 선택");
             p("3. 유형 선택");
             p("4. 개봉 국가 선택");
-            p("5. 평가 점수 선택");
+            p("5. 평균 평가 점수 선택");
             p("6. 개봉(방영 시작)년도 선택");
             p("7. 방영 종료 년도 선택");
             p("8. 배우 선택");
@@ -1126,11 +1128,11 @@ public class KnuMovie {
                     KnuMovie.clearScreen();
                     break;
                 case 6:
-                    startYear = enterYear("개봉일 또는 방영 시작일");
+                    enterYear("개봉연도", startYear);
                     KnuMovie.clearScreen();
                     break;
                 case 7:
-                    endYear = enterYear("방영 종료일");
+                    enterYear("종영연도", endYear);
                     KnuMovie.clearScreen();
                     break;
                 case 8:
@@ -1166,11 +1168,14 @@ public class KnuMovie {
                         sql = sql.concat(" AND Running_time = " + runningTime);
                     if (rating.minRating != -1 && rating.maxRating != -1)
                         sql = sql.concat(" AND rating >= " + rating.minRating + " AND rating <= " + rating.maxRating);
-                    if (startYear != "")
-                        sql = sql.concat(" AND DATE_PART('year',Start_year) = '" + startYear + "'");
-                    if (endYear != "")
-                        sql = sql.concat(" AND DATE_PART('year',End_year) = '" + endYear + "'");
-
+                    if (startYear.minYear != "") {
+                        sql = sql.concat(" AND DATE_PART('year',Start_year) >= '" + startYear.minYear + "'");
+                        sql = sql.concat(" AND DATE_PART('year',Start_year) <= '" + startYear.maxYear + "'");
+                    }
+                    if (endYear.minYear != "") {
+                        sql = sql.concat(" AND DATE_PART('year',End_year) >= '" + endYear.minYear + "'");
+                        sql = sql.concat(" AND DATE_PART('year',End_year) <= '" + endYear.maxYear + "'");
+                    }
                     try {
                         Statement stmt = conn.createStatement();
                         ResultSet rs = stmt.executeQuery(sql);
@@ -1186,7 +1191,7 @@ public class KnuMovie {
                         KnuMovie.pause();
                     }
                     movieData.clear();
-                    type = startYear = endYear = region = actor = "";
+                    type = startYear.minYear = startYear.maxYear = endYear.minYear = endYear.maxYear = region = actor = "";
                     runningTime = genreId = -1;
                     rating.minRating = rating.maxRating = -1;
 
@@ -1327,20 +1332,52 @@ public class KnuMovie {
     }
 
     // 연도 선택
-    private String enterYear(String startOrEnd) {
+    private void enterYear(String startOrEnd, StartYear startYear) {
         p(startOrEnd + " 선택");
         p("=======================================");
         boolean isValid = false;
-        String year = "";
+        String minYear = "";
+        String maxYear = "";
         while (!isValid) {
-            p(startOrEnd + "을 입력해주세요 (ex) 1984): ");
-            year = scan.next();
+            p("최소 " + startOrEnd + "을 입력해주세요 (ex) 1984): ");
+            minYear = scan.next();
             String pattern = "^\\d{4}$";
-            isValid = Pattern.matches(pattern, year);
+            isValid = Pattern.matches(pattern, minYear);
+            if (!isValid)
+                p("날짜 형식이 잘못 되었습니다. 다시 입력해 주세요.");
+            p("최대 " + startOrEnd + "을 입력해주세요 (ex) 1984): ");
+            maxYear = scan.next();
+            pattern = "^\\d{4}$";
+            isValid = Pattern.matches(pattern, maxYear);
             if (!isValid)
                 p("날짜 형식이 잘못 되었습니다. 다시 입력해 주세요.");
         }
-        return year;
+        startYear.minYear = minYear;
+        startYear.maxYear = maxYear;
+    }
+
+    private void enterYear(String startOrEnd, EndYear endYear) {
+        p(startOrEnd + " 선택");
+        p("=======================================");
+        boolean isValid = false;
+        String minYear = "";
+        String maxYear = "";
+        while (!isValid) {
+            p("최소 " + startOrEnd + "을 입력해주세요 (ex) 1984): ");
+            minYear = scan.next();
+            String pattern = "^\\d{4}$";
+            isValid = Pattern.matches(pattern, minYear);
+            if (!isValid)
+                p("날짜 형식이 잘못 되었습니다. 다시 입력해 주세요.");
+            p("최대 " + startOrEnd + "을 입력해주세요 (ex) 1984): ");
+            maxYear = scan.next();
+            pattern = "^\\d{4}$";
+            isValid = Pattern.matches(pattern, maxYear);
+            if (!isValid)
+                p("날짜 형식이 잘못 되었습니다. 다시 입력해 주세요.");
+        }
+        endYear.minYear = minYear;
+        endYear.maxYear = maxYear;
     }
 
     // 평가 선택
@@ -1652,6 +1689,27 @@ public class KnuMovie {
         Rating(int minRating, int maxRating) {
             this.minRating = minRating;
             this.maxRating = maxRating;
+        }
+    }
+
+    private class StartYear {
+        String minYear = "";
+        String maxYear = "";
+
+        StartYear(String minYear, String maxYear) {
+            this.minYear = minYear;
+            this.maxYear = maxYear;
+        }
+    }
+
+    private class EndYear {
+
+        String minYear = "";
+        String maxYear = "";
+
+        EndYear(String minYear, String maxYear) {
+            this.minYear = minYear;
+            this.maxYear = maxYear;
         }
     }
 
