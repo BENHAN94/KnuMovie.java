@@ -2,9 +2,21 @@
 # Team12-Phase3
 
 # 제작환경
+  - Ubuntu 64-bit 20.04.1
+  - Linux x86_64
   - DB using psql(PostgreSQL) 12.4  
   - JDBC 42.2.18 (for PostgreSQL)
   - JDK 11.0.9
+가능하시다면 VSCODE를 이용해주시면 감사드리겠습니다.
+  VScode for Java
+  - extension Java Extension Pack
+	  - extension Maven for Java
+	  - Ret Hat
+	  - Java Test Runner
+	  - Project Manager for Java
+	  - Debugger for Java
+  - pom.xml dependencies->dependency <systemPath>경로 바꾸기
+  
 
 # 실행법
 
