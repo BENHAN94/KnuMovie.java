@@ -47,7 +47,7 @@
 	First Name(Fname)
 	Last Name(Lname)
 	Password(Password)
-※중복 입력 시 전부 다시 입력해야 합다
+※중복 입력 시 전부 다시 입력해야 한다
 
  3) Application 종료
     - Application을 종료한다
